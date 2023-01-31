@@ -1,5 +1,5 @@
 const express = require('express');
-const Joi = require('joi');
+const {student_schema,student_update_schema} = require('./models/student')
 const app = express();
 const port = 3000;
 
@@ -23,11 +23,7 @@ app.get('/api/students/:stdId', (req,res)=>{
 
 app.use(express.json());
 
-let student_schema = Joi.object({
-    id: Joi.number().integer().positive(),
-    name: Joi.string().pattern(new RegExp('^[a-zA-Z0-9 ]{3,25}$')).required(),
-    class: Joi.string().alphanum().min(3).max(10).required()
-});
+
 
 app.post('/api/students',  (req, res) => {
   let valid_res = student_schema.validate(req.body);
@@ -42,11 +38,7 @@ app.post('/api/students',  (req, res) => {
   res.status(201).send(student);
 });
 
-let student_update_schema = Joi.object({
-    id: Joi.number().integer().positive(),
-    name: Joi.string().pattern(new RegExp('^[a-zA-Z0-9 ]{3,25}$')),
-    class: Joi.string().alphanum().min(3).max(10)
-});
+
 
 app.put('/api/students/:stdId', (req, res) => {
     let valid_res = student_update_schema.validate(req.body);
