@@ -30,6 +30,24 @@ app.post('/api/students',  (req, res) => {
   };
   students.push(student);
   res.status(201).send(student);
-})
+});
+
+app.put('/api/students/:stdId', (req, res) => {
+    let student = students.find(std => std.id === parseInt(req.params.stdId));
+    if(!student)
+        return res.status(404).send('student with given id is not found.');
+    //update of student
+    if(req.body.name)
+        student.name = req.body.name
+    if(req.body.class)
+        student.class = req.body.class
+    res.status(202).send(student);
+});
+// delete TODO
+app.delete('/api/students/:stdId', function(req, res) {
+    let student = students.find(std => std.id === parseInt(req.params.stdId));
+    if(!student)
+        return res.status(404).send('student with given id is not found.');
+});
 
 app.listen(port,()=>console.log(`Students API running on ${port}`));
