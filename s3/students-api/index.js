@@ -1,4 +1,5 @@
 const express = require('express');
+const Joi = require('joi');
 const app = express();
 const port = 3000;
 
@@ -22,7 +23,16 @@ app.get('/api/students/:stdId', (req,res)=>{
 
 app.use(express.json());
 
+let student_schema = Joi.object({
+    id: Joi.number().integer().positive(),
+    name: Joi.string().pattern(new RegExp('^[a-zA-Z0-9 ]{3,25}$')).required(),
+    class: Joi.string().alphanum().min(3).max(10).required()
+});
+
 app.post('/api/students',  (req, res) => {
+  let valid_res = student_schema.validate(req.body);
+  if(valid_res.error)
+    return res.status(400).send(valid_res.error.message);
   let student = {
     id: students.length + 1,
     name : req.body.name,
@@ -32,7 +42,16 @@ app.post('/api/students',  (req, res) => {
   res.status(201).send(student);
 });
 
+let student_update_schema = Joi.object({
+    id: Joi.number().integer().positive(),
+    name: Joi.string().pattern(new RegExp('^[a-zA-Z0-9 ]{3,25}$')),
+    class: Joi.string().alphanum().min(3).max(10)
+});
+
 app.put('/api/students/:stdId', (req, res) => {
+    let valid_res = student_update_schema.validate(req.body);
+  if(valid_res.error)
+    return res.status(400).send(valid_res.error.message);
     let student = students.find(std => std.id === parseInt(req.params.stdId));
     if(!student)
         return res.status(404).send('student with given id is not found.');
