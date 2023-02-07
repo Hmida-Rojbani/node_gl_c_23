@@ -9,7 +9,7 @@ let students = [
     {id:4, name:'Student 4', class: 'Class A'}
 ];
 
-router.get('', (req,res)=>{
+router.get('/', (req,res)=>{
     res.send(students);
 });
 
