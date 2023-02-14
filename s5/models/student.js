@@ -8,7 +8,12 @@ let student_schema = new mongoose.Schema({
     },
     age : Number,
     active : Boolean,
-    payedAmount : Number
+    payedAmount : Number,
+    email : {
+        type : String,
+        unique : true,
+        required : true
+    }
 });
 
 let Student = mongoose.model('Student',student_schema);
