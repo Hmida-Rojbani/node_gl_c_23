@@ -2,6 +2,7 @@ const router = require('express').Router();
 const  mongoose  = require('mongoose');
 const {Student} = require('../models/student');
 const _ = require('lodash');
+const { ClassRoom } = require('../models/classroom');
 
 router.post('/',async (req,res)=>{
      let student = new Student(req.body);
@@ -11,9 +12,16 @@ router.post('/',async (req,res)=>{
         let error = student.validateInputData(req.body);
         if(error)
             return res.status(400).send(error.message);
-        student.test="test"
-        console.log(student.test);
+        let classRoom = await ClassRoom.findById(req.body.classID);
+        if(!classRoom)
+            return res.status(400).send('classRoom Id not found')
+        student.classRoom.id = classRoom._id;
+        student.classRoom.name = classRoom.name;
+        classRoom.student_number++;
+        
         student = await student.save();
+        classRoom.students.push(student._id);
+        await classRoom.save();
     } catch (error) {
         return res.status(400).send(error.message)
     }
@@ -29,10 +37,21 @@ router.get('/', async (req, res) => {
 router.get('/id/:id', async (req, res) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id))
         return res.status(400).send('Object Id is not valid')
-    let student = await Student.findById(req.params.id);
+    let student = await Student.findById(req.params.id)
+                                .populate('classRoom.id');
     if(!student)
         return res.status(404).send('Id not found')
     res.status(200).send(student);
+});
+
+router.get('/id/:id/modules', async (req, res) => {
+    if(!mongoose.Types.ObjectId.isValid(req.params.id))
+        return res.status(400).send('Object Id is not valid')
+    let student = await Student.findById(req.params.id)
+                                .populate('classRoom.id');
+    if(!student)
+        return res.status(404).send('Id not found')
+    res.status(200).send(student.classRoom.id.modules);
 });
 
 router.put('/id/:id', async (req, res) => {
