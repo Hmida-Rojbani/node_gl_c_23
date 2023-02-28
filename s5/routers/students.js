@@ -4,10 +4,14 @@ const {Student} = require('../models/student');
 const _ = require('lodash');
 
 router.post('/',async (req,res)=>{
-    // let student = new Student(req.body);
-    // student = await student.save();
+     let student = new Student(req.body);
+    
     try {
-        var student = await Student.create(req.body);
+        //var student = await Student.create(req.body);
+        let error = student.validateInputData(req.body);
+        if(error)
+            return res.status(400).send(error.message);
+        student = await student.save();
     } catch (error) {
         return res.status(400).send(error.message)
     }
