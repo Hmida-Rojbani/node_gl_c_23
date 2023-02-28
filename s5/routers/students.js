@@ -11,6 +11,8 @@ router.post('/',async (req,res)=>{
         let error = student.validateInputData(req.body);
         if(error)
             return res.status(400).send(error.message);
+        student.test="test"
+        console.log(student.test);
         student = await student.save();
     } catch (error) {
         return res.status(400).send(error.message)
