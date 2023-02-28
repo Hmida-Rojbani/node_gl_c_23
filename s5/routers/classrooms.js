@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const  mongoose = require('mongoose');
+const auth = require('../middelwares/auth');
+const autoris = require('../middelwares/autoris');
 const { ClassRoom } = require('../models/classroom');
 
-router.post('/',async (req, res) =>{
+router.post('/',autoris,async (req, res) =>{
     let classRoom = new ClassRoom(req.body);
     try {
         classRoom = await classRoom.save();
